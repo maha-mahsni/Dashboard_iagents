@@ -3,35 +3,43 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "next": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --reload --port 8000",
+    "dev": "concurrently \"npm run next\" \"npm run fastapi\""
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.0",
+    "@fortawesome/fontawesome-free": "^6.7.2",
     "@mui/icons-material": "^7.0.1",
     "@mui/lab": "^7.0.0-beta.10",
     "@mui/material": "^7.0.1",
+    "@prisma/client": "^6.11.1",
     "@tabler/icons-react": "^3.33.0",
-    "@types/node": "^20.2.3",
-    "apexcharts": "4.7.0",
+    "apexcharts": "^4.7.0",
+    "chart.js": "^4.5.0",
     "eslint": "8.46.0",
     "eslint-config-next": "13.4.12",
     "lodash": "^4.17.21",
-    "next": "^15.1.7",
-    "react": "19.1.0",
-    "react-apexcharts": "1.7.0",
-    "react-dom": "19.1.0",
+    "next": "^15.3.5",
+    "prisma": "^6.11.1",
+    "react": "18.2.0",
+    "react-apexcharts": "^1.7.0",
+    "react-dom": "18.2.0",
     "react-mui-sidebar": "^1.6.3",
-    "react-syntax-highlighter": "^15.6.1",
-    "typescript": "5.7.3"
+    "react-syntax-highlighter": "^5.8.0"
   },
   "devDependencies": {
     "@types/lodash": "4.14.196",
-    "@types/react-syntax-highlighter": "^15.5.13"
+    "@types/node": "24.0.12",
+    "@types/react": "19.1.8",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "concurrently": "^9.2.0",
+    "typescript": "5.8.3"
   }
 }

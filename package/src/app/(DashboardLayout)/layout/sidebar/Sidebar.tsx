@@ -1,5 +1,6 @@
 import { useMediaQuery, Box, Drawer } from "@mui/material";
 import SidebarItems from "./SidebarItems";
+import ChatIcon from '@mui/icons-material/Chat'
 
 
 
