@@ -511,5 +511,167 @@
     "timestamp": "2025-07-18T10:10:04.375378",
     "duration": 2.89,
     "success": true
+  },
+  {
+    "message": "quel hotel recommande toi à djerba?",
+    "timestamp": "2025-07-18T11:03:57.707221",
+    "duration": 3.44,
+    "success": true
+  },
+  {
+    "message": "on est une famille de 4 quel est ta suggestion",
+    "timestamp": "2025-07-18T11:04:38.679568",
+    "duration": 3.83,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:05:49.756400",
+    "duration": 0.86,
+    "success": false
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:08:17.888990",
+    "duration": 1.35,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:08:28.611469",
+    "duration": 2.31,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:08:38.595579",
+    "duration": 2.68,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:10:03.029043",
+    "duration": 2.17,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:15:22.248725",
+    "duration": 2.44,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:15:31.154198",
+    "duration": 2.71,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:17:58.919980",
+    "duration": 2.21,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:23:09.159728",
+    "duration": 4.02,
+    "success": true
+  },
+  {
+    "message": "c'est quoi les fraises",
+    "timestamp": "2025-07-18T11:23:37.288892",
+    "duration": 3.5,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:23:50.968427",
+    "duration": 4.22,
+    "success": true
+  },
+  {
+    "message": "recommande for me a hotel at tunis",
+    "timestamp": "2025-07-18T11:24:22.932345",
+    "duration": 6.7,
+    "success": true
+  },
+  {
+    "message": "hello",
+    "timestamp": "2025-07-18T11:25:00.772379",
+    "duration": 6.01,
+    "success": true
+  },
+  {
+    "message": "Hi !",
+    "timestamp": "2025-07-18T11:26:01.872520",
+    "duration": 2.22,
+    "success": true
+  },
+  {
+    "message": "recommand for me a film",
+    "timestamp": "2025-07-18T11:26:17.326176",
+    "duration": 3.65,
+    "success": true
+  },
+  {
+    "message": "recommand for me a film in tunisia",
+    "timestamp": "2025-07-18T11:26:53.471741",
+    "duration": 4.5,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:32:17.726456",
+    "duration": 2.06,
+    "success": true
+  },
+  {
+    "message": "when i say i hi you answer with hi am an agent for recommandation",
+    "timestamp": "2025-07-18T11:32:54.084378",
+    "duration": 1.96,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:33:08.217165",
+    "duration": 2.82,
+    "success": true
+  },
+  {
+    "message": "when i say i hi you answer with hi am an agent for recommandation",
+    "timestamp": "2025-07-18T11:33:19.045966",
+    "duration": 3.48,
+    "success": true
+  },
+  {
+    "message": "recommand for me a hotel in ttunisia,djerba",
+    "timestamp": "2025-07-18T11:33:57.701088",
+    "duration": 4.25,
+    "success": true
+  },
+  {
+    "message": "recommand for me a hotel in djerba",
+    "timestamp": "2025-07-18T11:34:55.228583",
+    "duration": 4.15,
+    "success": true
+  },
+  {
+    "message": "recommand for me a floral parfum",
+    "timestamp": "2025-07-18T11:36:23.544909",
+    "duration": 4.15,
+    "success": true
+  },
+  {
+    "message": "i want to use it with my mother",
+    "timestamp": "2025-07-18T11:36:58.263887",
+    "duration": 4.8,
+    "success": true
+  },
+  {
+    "message": "hi",
+    "timestamp": "2025-07-18T11:38:46.504118",
+    "duration": 3.01,
+    "success": true
   }
 ]

@@ -12,8 +12,11 @@ from collections import defaultdict
 import json
 import smtplib
 from email.message import EmailMessage
+from langdetect import detect_langs
+
 app = FastAPI()
 chat_history = []
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], allow_credentials=True,
@@ -33,22 +36,33 @@ async def chat(request: ChatRequest):
         return JSONResponse(content={"error": "Message manquant"}, status_code=400)
 
     try:
-        user_lang = detect(user_input)
+       langs = detect_langs(user_input)
+       if langs and langs[0].prob > 0.80:
+            user_lang = langs[0].lang
+       else:
+            user_lang = "en"  # par défaut
     except:
         user_lang = "fr"
-
     system_message = f"""
 Tu es un agent de recommandation intelligente.
-Tu dois répondre uniquement si la question est une RECOMMANDATION.
-Tu réponds TOUJOURS en langue détectée : {user_lang}
+Tu réponds uniquement si la question est une RECOMMANDATION.
+Tu prends en compte tout le contexte de la conversation précédente pour répondre de manière cohérente.
+Tu dois TOUJOURS répondre dans la langue détectée : {user_lang}.
 """
+
 
     # 🧠 Appel à l’API externe
 # Ajouter l'historique au prompt
     messages = [{"role": "system", "content": system_message}]
-    messages.extend(chat_history[-10:])  # Max 6 derniers échanges
-    messages.append({"role": "user", "content": user_input})
 
+# Ajouter jusqu'à 10 derniers messages pour garder le contexte conversationnel
+    nb_max = 10
+    messages.extend(chat_history[-nb_max:])  # Alternance user/assistant
+
+# Ajouter le message courant
+# Ajouter le message courant avec langue détectée
+    user_input_lang = f"[Langue détectée : {user_lang}]\n{user_input}"
+    messages.append({"role": "user", "content": user_input_lang})
     payload = {
     "model": MODEL,
     "messages": messages
@@ -90,7 +104,7 @@ Tu réponds TOUJOURS en langue détectée : {user_lang}
         _log(user_input, duration, False)
         print("Envoi de l'email d'erreur en cours...")
         send_error_email(
-            subject="❌Erreur de l'agent de Recommandation IA",
+            subject="Erreur de l'agent de Recommandation IA",
             body=f"Une erreur est survenue pendant la requête.\n\nMessage: {user_input}\nErreur: {str(e)}"
         )
         return JSONResponse(content={"error": str(e)}, status_code=500)
