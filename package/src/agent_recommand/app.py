@@ -23,7 +23,7 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"]
 )
 
-API_KEY = "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"
+API_KEY = "your api key"
 
 class ChatRequest(BaseModel):
     message: str
@@ -274,7 +274,7 @@ def get_pic_utilisation(agent_id: int):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 EMAIL_SENDER = "mohsnimaha1@gmail.com"
-EMAIL_PASSWORD = "uevrbbroclgsomhw"
+EMAIL_PASSWORD = "your api key"
 EMAIL_RECEIVER = "maha.mahsni@esprit.tn"
 
 def send_error_email(subject, body):
