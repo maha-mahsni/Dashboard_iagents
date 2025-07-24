@@ -7,13 +7,13 @@ from statistics import mean
 from datetime import datetime
 import requests, json, time
 import random
-import requests, json, time, random
 from collections import defaultdict
 import json
 import smtplib
 from email.message import EmailMessage
 from langdetect import detect_langs
-
+from fastapi import FastAPI, HTTPException
+import os
 app = FastAPI()
 chat_history = []
 
@@ -24,22 +24,25 @@ app.add_middleware(
 )
 
 API_KEY = "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"
-MODEL = "mistralai/mistral-7b-instruct"
 
 class ChatRequest(BaseModel):
     message: str
 
+def get_log_file_path(agent_id):
+    return f"logs_{agent_id}.json"
+
 @app.post("/chat")
 async def chat(request: ChatRequest):
+    agent_id = 15  # À modifier dynamiquement si nécessaire (par exemple, via un paramètre)
     user_input = request.message.strip()
     if not user_input:
         return JSONResponse(content={"error": "Message manquant"}, status_code=400)
 
     try:
-       langs = detect_langs(user_input)
-       if langs and langs[0].prob > 0.80:
+        langs = detect_langs(user_input)
+        if langs and langs[0].prob > 0.80:
             user_lang = langs[0].lang
-       else:
+        else:
             user_lang = "en"  # par défaut
     except:
         user_lang = "fr"
@@ -50,23 +53,20 @@ Tu prends en compte tout le contexte de la conversation précédente pour répon
 Tu dois TOUJOURS répondre dans la langue détectée : {user_lang}.
 """
 
-
     # 🧠 Appel à l’API externe
-# Ajouter l'historique au prompt
     messages = [{"role": "system", "content": system_message}]
 
-# Ajouter jusqu'à 10 derniers messages pour garder le contexte conversationnel
+    # Ajouter jusqu'à 10 derniers messages pour garder le contexte conversationnel
     nb_max = 10
     messages.extend(chat_history[-nb_max:])  # Alternance user/assistant
 
-# Ajouter le message courant
-# Ajouter le message courant avec langue détectée
+    # Ajouter le message courant avec langue détectée
     user_input_lang = f"[Langue détectée : {user_lang}]\n{user_input}"
     messages.append({"role": "user", "content": user_input_lang})
     payload = {
-    "model": MODEL,
-    "messages": messages
-               }
+        "model": "mistralai/mistral-7b-instruct",
+        "messages": messages
+    }
 
     start = time.time()
     try:
@@ -79,13 +79,14 @@ Tu dois TOUJOURS répondre dans la langue détectée : {user_lang}.
             },
             json=payload
         )
-        res.raise_for_status()  # OBLIGATOIRE pour déclencher une erreur réseau/API
+        res.raise_for_status()
 
         duration = round(time.time() - start, 2)
         data = res.json()
         success = "choices" in data
 
-        _log(user_input, duration, success)
+        api_used = payload["model"]
+        _log(user_input, duration, success, agent_id, api_used)
 
         if not success:
             send_error_email(
@@ -101,7 +102,7 @@ Tu dois TOUJOURS répondre dans la langue détectée : {user_lang}.
 
     except Exception as e:
         duration = round(time.time() - start, 2)
-        _log(user_input, duration, False)
+        _log(user_input, duration, False, agent_id, payload["model"])
         print("Envoi de l'email d'erreur en cours...")
         send_error_email(
             subject="Erreur de l'agent de Recommandation IA",
@@ -109,52 +110,61 @@ Tu dois TOUJOURS répondre dans la langue détectée : {user_lang}.
         )
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-
-# 🔄 Fonction pour retirer une requête de la file
-def _log(message, duration, success):
+# 🔄 Fonction pour enregistrer les logs avec l'API utilisée
+def _log(message, duration, success, agent_id, api_used):
     log_entry = {
+        "agent_id": agent_id,
         "message": message,
         "timestamp": datetime.now().isoformat(),
         "duration": duration,
-        "success": success
+        "success": success,
+        "api": api_used
     }
+    log_file = get_log_file_path(agent_id)
     try:
-        with open("logs.json", "r+", encoding="utf-8") as f:
-            logs = json.load(f)
-            logs.append(log_entry)
-            f.seek(0)
-            json.dump(logs, f, indent=2, ensure_ascii=False)
+        try:
+            with open(log_file, "r+", encoding="utf-8") as f:
+                logs = json.load(f)
+                logs.append(log_entry)
+                f.seek(0)
+                json.dump(logs, f, indent=2, ensure_ascii=False)
+        except json.JSONDecodeError:
+            with open(log_file, "w", encoding="utf-8") as f:
+                json.dump([log_entry], f, indent=2, ensure_ascii=False)
     except FileNotFoundError:
-        with open("logs.json", "w", encoding="utf-8") as f:
+        with open(log_file, "w", encoding="utf-8") as f:
             json.dump([log_entry], f, indent=2, ensure_ascii=False)
 
-@app.get("/stats")
-def get_stats():
+@app.get("/stats/{agent_id}")
+def get_stats(agent_id: int):
     try:
-        with open("logs.json", "r", encoding="utf-8") as f:
-            logs = json.load(f)
+        log_file = get_log_file_path(agent_id)
+        with open(log_file, "r", encoding="utf-8") as f:
+            agent_logs = json.load(f)
 
-        if not logs:
+        if not agent_logs:
             return _empty_stats()
 
-        durations = [log.get("duration", 1.5) for log in logs]
-        success_count = sum(1 for log in logs if log.get("success"))
-        taux_succes = round((success_count / len(logs)) * 100, 1)
-        etat_agent = "actif" if logs[-1].get("success") else "erreur"
-        tokens_total = len(logs) * 30
+        durations = [log.get("duration", 1.5) for log in agent_logs]
+        success_count = sum(1 for log in agent_logs if log.get("success"))
+        taux_succes = round((success_count / len(agent_logs)) * 100, 1) if agent_logs else 0
+        etat_agent = "actif" if agent_logs[-1].get("success") else "erreur"
+        tokens_total = len(agent_logs) * 30
         cout_total = round(tokens_total * 0.0001, 3)
+        api_used = agent_logs[-1].get("api", "inconnu")
 
         return {
-            "executions": len(logs),
+            "executions": len(agent_logs),
             "temps_moyen": f"{round(mean(durations), 2)}s",
-            "derniere_execution": datetime.fromisoformat(logs[-1]["timestamp"]).strftime("%d/%m/%Y %H:%M"),
+            "derniere_execution": datetime.fromisoformat(agent_logs[-1]["timestamp"]).strftime("%d/%m/%Y %H:%M"),
             "taux_succes": f"{taux_succes}%",
             "tokens": tokens_total,
             "cout": f"{cout_total}$",
-            "api": MODEL,
+            "api": api_used,
             "etat": etat_agent
         }
-
+    except (FileNotFoundError, json.JSONDecodeError):
+        return _empty_stats()
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
@@ -166,28 +176,31 @@ def _empty_stats():
         "taux_succes": "0%",
         "tokens": 0,
         "cout": "0.00$",
-        "api": MODEL,
+        "api": "inconnu",
         "etat": "inactif"
     }
-@app.get("/logs")
-def get_logs():
+
+@app.get("/logs/{agent_id}")
+def get_logs(agent_id: int):
     try:
-        with open("logs.json", "r", encoding="utf-8") as f:
+        log_file = f"logs_{agent_id}.json"
+        with open(log_file, "r", encoding="utf-8") as f:
             logs = json.load(f)
         if isinstance(logs, list):
-            return logs  # ✅ un vrai tableau
+            return logs
         return []
+    except FileNotFoundError:
+        return []  # Retourner un tableau vide si le fichier n'existe pas
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
-
-
-@app.get("/stats/realtime")
-def get_realtime_stats():
+@app.get("/stats/realtime/{agent_id}")
+def get_realtime_stats(agent_id: int):
     try:
-        with open("logs.json", "r", encoding="utf-8") as f:
+        log_file = get_log_file_path(agent_id)
+        with open(log_file, "r", encoding="utf-8") as f:
             logs = json.load(f)
 
-        last_logs = logs[-7:]  # ⏱️ Derniers 7 logs pour l’historique
+        last_logs = logs[-7:]  # Derniers 7 logs pour l’historique
         timeline = []
         for log in last_logs:
             timeline.append({
@@ -197,83 +210,66 @@ def get_realtime_stats():
             })
 
         return timeline
-    except Exception as e:
+    except (FileNotFoundError, json.JSONDecodeError, Exception) as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-@app.get("/activite")
-def activite_par_heure():
+@app.get("/activite/{agent_id}")
+def activite_par_heure(agent_id: int):
     try:
-        with open("logs.json", "r", encoding="utf-8") as f:
+        log_file = get_log_file_path(agent_id)
+        with open(log_file, "r", encoding="utf-8") as f:
             logs = json.load(f)
 
         histogramme = defaultdict(int)
-
         for log in logs:
             if "timestamp" in log:
                 heure = datetime.fromisoformat(log["timestamp"]).strftime("%Hh")
                 histogramme[heure] += 1
 
         trié = dict(sorted(histogramme.items()))  # Trie les heures
-
         return {"labels": list(trié.keys()), "data": list(trié.values())}
-    except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
-@app.get("/performance")
-def get_performance():
-    try:
-        with open("logs.json", "r", encoding="utf-8") as f:
-            logs = json.load(f)
-
-        # Grouper les durées par heure
-        perf_par_heure = defaultdict(list)
-        for entry in logs:
-            if "timestamp" in entry and "duration" in entry:
-                heure = datetime.fromisoformat(entry["timestamp"]).strftime("%Hh")
-                perf_par_heure[heure].append(entry["duration"])
-
-        courbe = []
-        for heure, durations in sorted(perf_par_heure.items()):
-            if durations:
-                moyenne = round(sum(durations) / len(durations), 2)
-                courbe.append({"time": heure, "duration": moyenne})
-
-        # Requêtes actives et file attente
-        try:
-            with open("queue.json", "r", encoding="utf-8") as f:
-                queue = json.load(f)
-            requetes_actives = len(queue)
-        except FileNotFoundError:
-            requetes_actives = 0
-
-        file_attente = max(0, requetes_actives - 1)
-
-        return {
-            
-            "courbe": courbe
-        }
-    except Exception as e:
+    except (FileNotFoundError, json.JSONDecodeError, Exception) as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
-
-@app.get("/pic-usage")
-def get_pic_utilisation():
+@app.get("/performance/{agent_id}")
+def get_performance(agent_id: int):
     try:
-        with open("logs.json", "r", encoding="utf-8") as f:
+        log_file = get_log_file_path(agent_id)
+        if os.path.exists(log_file):
+            with open(log_file, "r", encoding="utf-8") as f:
+                logs = json.load(f)
+            perf_par_heure = defaultdict(list)
+            for entry in logs:
+                if "timestamp" in entry and "duration" in entry:
+                    heure = datetime.fromisoformat(entry["timestamp"]).strftime("%Hh")
+                    perf_par_heure[heure].append(entry["duration"])
+            courbe = [{"time": heure, "duration": round(sum(durations) / len(durations), 2)} for heure, durations in sorted(perf_par_heure.items()) if durations]
+        else:
+            courbe = []  # Tableau vide si pas de logs
+        return {"courbe": courbe, "requetes_actives": 0, "file_attente": 0, "temps_reponse": 0}
+    except Exception as e:
+        return {"courbe": [], "requetes_actives": 0, "file_attente": 0, "temps_reponse": 0, "error": str(e)}, 500
+@app.get("/pic-usage/{agent_id}")
+def get_pic_utilisation(agent_id: int):
+    log_file = f"logs_{agent_id}.json"
+    
+    if not os.path.exists(log_file):
+        return {"utilisation": 0}
+    
+    try:
+        with open(log_file, "r", encoding="utf-8") as f:
             logs = json.load(f)
 
-        activite_par_heure = defaultdict(int)
-        for log in logs:
-            heure = datetime.fromisoformat(log["timestamp"]).strftime("%H")
-            activite_par_heure[heure] += 1
+        heures = [datetime.fromisoformat(log["timestamp"]).hour for log in logs if "timestamp" in log]
+        if not heures:
+            return {"utilisation": 0}
+        heure_max = max(set(heures), key=heures.count)
+        total = len(heures)
+        pic = heures.count(heure_max)
+        utilisation = round((pic / total) * 100, 2)
 
-        if not activite_par_heure:
-            return {"heure": "00h", "pic_utilisation": 0}
-
-        heure_pic = max(activite_par_heure, key=activite_par_heure.get)
-        total = sum(activite_par_heure.values())
-        pourcentage = round((activite_par_heure[heure_pic] / total) * 100, 2)
-
-        return {"heure": f"{heure_pic}h", "pic_utilisation": pourcentage}
+        return {"utilisation": utilisation}
+    
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 

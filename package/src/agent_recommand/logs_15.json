@@ -1,0 +1,10 @@
+[
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-23T12:27:53.290833",
+    "duration": 3.16,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  }
+]

@@ -12,6 +12,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
+import { useRouter } from 'next/navigation';
 
 interface Agent {
   id: number
@@ -39,6 +40,8 @@ export default function AgentsPage() {
   const filteredAgents = agents.filter(agent =>
     filter === 'tous' ? true : agent.status === filter
   )
+  const router = useRouter();
+
   const fetchAgents = async () => {
     try {
       const res = await fetch('/api')
@@ -46,6 +49,7 @@ export default function AgentsPage() {
       setAgents(data)
     } catch (error) {
       console.error('Erreur API:', error)
+      toast.error("Erreur lors de la récupération des agents")
     }
   }
 
@@ -58,11 +62,11 @@ export default function AgentsPage() {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!form.name || !form.type || !form.language || !form.version || !form.createdAt) {
-      toast.error("Veuillez remplir tous les champs obligatoires !")
-      return
+      toast.error("Veuillez remplir tous les champs obligatoires !");
+      return;
     }
 
     try {
@@ -70,14 +74,17 @@ export default function AgentsPage() {
         method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(isEditing ? { ...form, id: editingId } : form)
-      })
+      });
+
+      const data = await res.json();
+      console.log("Réponse de l'API après ajout/mise à jour:", data);
 
       if (!res.ok) {
-        toast.error(isEditing ? "Erreur lors de la mise à jour" : "Erreur lors de l’ajout")
-        return
+        toast.error(isEditing ? "Erreur lors de la mise à jour" : "Erreur lors de l’ajout");
+        return;
       }
 
-      toast.success(isEditing ? "Agent mis à jour ✅" : "Agent ajouté 🎉")
+      toast.success(isEditing ? "Agent mis à jour ✅" : "Agent ajouté 🎉");
 
       setForm({
         name: '',
@@ -86,85 +93,95 @@ export default function AgentsPage() {
         version: '',
         createdAt: '',
         status: 'actif'
-      })
-      setIsEditing(false)
-      setEditingId(null)
-      fetchAgents()
+      });
+      setIsEditing(false);
+      setEditingId(null);
+      fetchAgents();
     } catch (error) {
-      toast.error("Erreur serveur")
+      console.error("Erreur serveur:", error);
+      toast.error("Erreur serveur");
     }
   }
 
   const handleDelete = (id: number) => {
-  toast.info(
-    ({ closeToast }) => (
-      <Box>
-        <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-          🛑 Voulez Supprimer l’agent sur 🛑 
-        </div>
-        <Box display="flex" gap={1} mt={1}>
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={() => {
-              closeToast?.()
-            }}
-          >
-          Annuler
-          </Button>
-          <Button
-            size="small"
-            variant="contained"
-            color="error"
-            onClick={async () => {
-              closeToast?.()
-              try {
-                const res = await fetch('/api', {
-                  method: 'DELETE',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id })
-                })
+    toast.info(
+      ({ closeToast }) => (
+        <Box>
+          <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
+            🛑 Voulez-vous supprimer l’agent ? 🛑 
+          </div>
+          <Box display="flex" gap={1} mt={1}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                closeToast?.()
+              }}
+            >
+              Annuler
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              color="error"
+              onClick={async () => {
+                closeToast?.()
+                try {
+                  const res = await fetch('/api', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                  })
 
-                if (!res.ok) {
-                  toast.error("❌ Erreur lors de la suppression")
-                  return
+                  if (!res.ok) {
+                    toast.error("❌ Erreur lors de la suppression")
+                    return
+                  }
+
+                  toast.success("✅ Agent supprimé avec succès")
+                  fetchAgents()
+                } catch {
+                  toast.error("Erreur serveur")
                 }
-
-                toast.success("✅ Agent supprimé avec succès")
-                fetchAgents()
-              } catch {
-                toast.error("Erreur serveur")
-              }
-            }}
-          >
-            Supprimer
-          </Button>
+              }}
+            >
+              Supprimer
+            </Button>
+          </Box>
         </Box>
-      </Box>
-    ),
-    {
-      position: 'top-right',
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      closeButton: false
-    }
-  )
-}
-
+      ),
+      {
+        position: 'top-right',
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false
+      }
+    )
+  }
 
   const handleEdit = (agent: Agent) => {
-  setForm({
-    name: agent.name,
-    type: agent.type,
-    language: agent.language,
-    version: agent.version,
-    // 🔥 Ceci convertit la date en "YYYY-MM-DD"
-    createdAt: new Date(agent.createdAt).toISOString().split('T')[0],
-    status: agent.status,
-  })
-  setIsEditing(true)
+    setForm({
+      name: agent.name,
+      type: agent.type,
+      language: agent.language,
+      version: agent.version,
+      createdAt: new Date(agent.createdAt).toISOString().split('T')[0],
+      status: agent.status,
+    })
+    setIsEditing(true)
     setEditingId(agent.id)
+  }
+
+  const handleViewDetails = (agent: Agent) => {
+    if (agent.status === 'inactif') {
+      toast.error("Erreur : cet agent est inactif", {
+        position: 'top-right',
+        autoClose: 3000,
+      });
+      return;
+    }
+    router.push(`/dashboard/${agent.id}`);
   }
 
   return (
@@ -200,18 +217,18 @@ export default function AgentsPage() {
                   <MenuItem value="Vision">Vision</MenuItem>
                   <MenuItem value="Traducteur">Traducteur</MenuItem>
                 </TextField>
-<TextField
-name="createdAt"
-  label="📅 Date de création"
-  type="date"
-  InputLabelProps={{ shrink: true }}
-  value={form.createdAt}
-  onChange={handleChange}
-  inputProps={{
-    max: new Date().toISOString().split('T')[0] // ✅ Limite max = aujourd’hui
-  }}
-  fullWidth
-/>
+                <TextField
+                  name="createdAt"
+                  label="📅 Date de création"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  value={form.createdAt}
+                  onChange={handleChange}
+                  inputProps={{
+                    max: new Date().toISOString().split('T')[0]
+                  }}
+                  fullWidth
+                />
                 <TextField name="language" label="🌐 Langage supporté" value={form.language} onChange={handleChange} select fullWidth>
                   <MenuItem value="">Sélectionnez un langage</MenuItem>
                   <MenuItem value="Français">Français</MenuItem>
@@ -261,18 +278,16 @@ name="createdAt"
         >
           <DashboardCard title="📋 Liste des agents IA">
             <Box sx={{ overflowX: 'auto' }}>
-                <TextField
+              <TextField
                 select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as 'tous' | 'actif' | 'inactif')}
                 sx={{ mb: 1, width: 195 }}
-                  size="small"
-
-                
+                size="small"
               >
-                <MenuItem value="tous"> tous est Affiché</MenuItem>
-                <MenuItem value="actif">Statut:Actif</MenuItem>
-                <MenuItem value="inactif">Statut:Inactif</MenuItem>
+                <MenuItem value="tous">Tous affichés</MenuItem>
+                <MenuItem value="actif">Statut: Actif</MenuItem>
+                <MenuItem value="inactif">Statut: Inactif</MenuItem>
               </TextField>
               <Table sx={{ minWidth: 650 }}>
                 <TableHead>
@@ -287,7 +302,7 @@ name="createdAt"
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredAgents.map((agent)=> (
+                  {filteredAgents.map((agent) => (
                     <TableRow key={agent.id} hover>
                       <TableCell>{agent.name}</TableCell>
                       <TableCell>{agent.type}</TableCell>
@@ -307,44 +322,59 @@ name="createdAt"
                           }}
                         />
                       </TableCell>
- <TableCell>
-  <Box display="flex" alignItems="center" gap={1}>
-    <IconButton
-      onClick={() => handleEdit(agent)}
-      sx={{
-        borderRadius: '50%',
-        color: '#0f172a',
-        border: '1.5px solid #0f172a',
-        width: 32,
-        height: 32,
-        '&:hover': {
-          backgroundColor: '#f1f5f9'
-        }
-      }}
-    >
-      <EditOutlinedIcon fontSize="small" />
-    </IconButton>
-
-    <IconButton
-      onClick={() => handleDelete(agent.id)}
-      sx={{
-        borderRadius: '50%',
-        color: '#f97316',
-        border: '1.5px solid #f97316',
-        width: 32,
-        height: 32,
-        '&:hover': {
-          backgroundColor: '#fff0e0',
-          color: '#ea580c',
-          borderColor: '#ea580c'
-        }
-      }}
-    >
-      <DeleteOutlineIcon fontSize="small" />
-    </IconButton>
-  </Box>
-</TableCell>
-
+                      <TableCell>
+                        <Box display="flex" alignItems="center" gap={1}>
+                          <IconButton
+                            onClick={() => handleViewDetails(agent)}
+                            sx={{
+                              borderRadius: '50%',
+                              color: '#2563eb',
+                              border: '1.5px solid #2563eb',
+                              width: 32,
+                              height: 32,
+                              '&:hover': {
+                                backgroundColor: '#dbeafe',
+                                color: '#1d4ed8',
+                                borderColor: '#1d4ed8'
+                              }
+                            }}
+                          >
+                            👁️
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleEdit(agent)}
+                            sx={{
+                              borderRadius: '50%',
+                              color: '#0f172a',
+                              border: '1.5px solid #0f172a',
+                              width: 32,
+                              height: 32,
+                              '&:hover': {
+                                backgroundColor: '#f1f5f9'
+                              }
+                            }}
+                          >
+                            <EditOutlinedIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => handleDelete(agent.id)}
+                            sx={{
+                              borderRadius: '50%',
+                              color: '#f97316',
+                              border: '1.5px solid #f97316',
+                              width: 32,
+                              height: 32,
+                              '&:hover': {
+                                backgroundColor: '#fff0e0',
+                                color: '#ea580c',
+                                borderColor: '#ea580c'
+                              }
+                            }}
+                          >
+                            <DeleteOutlineIcon fontSize="small" />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
                     </TableRow>
                   ))}
                   {agents.length === 0 && (
