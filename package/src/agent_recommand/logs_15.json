@@ -6,5 +6,357 @@
     "duration": 3.16,
     "success": true,
     "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:00:37.870161",
+    "duration": 0.0,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:01:47.494010",
+    "duration": 0.0,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:03:34.785209",
+    "duration": 0.3,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:06:03.163643",
+    "duration": 0.21,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:08:03.699674",
+    "duration": 0.21,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:14:22.018901",
+    "duration": 0.55,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:18:24.824693",
+    "duration": 0.33,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:19:58.495785",
+    "duration": 2.08,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:24:15.434822",
+    "duration": 0.2,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:34:07.601173",
+    "duration": 0.25,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:38:19.385442",
+    "duration": 0.19,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:39:42.984533",
+    "duration": 1.58,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:42:14.777053",
+    "duration": 2.87,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:43:25.892561",
+    "duration": 2.96,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:46:18.999709",
+    "duration": 2.54,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "oublie le mot swahili",
+    "timestamp": "2025-07-24T13:46:53.791034",
+    "duration": 2.41,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:47:16.406397",
+    "duration": 3.19,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:49:21.301316",
+    "duration": 5.78,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:52:24.380279",
+    "duration": 2.97,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T12:49:02.989276",
+    "duration": 2.65,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-24T13:52:05.246671",
+    "duration": 0.05,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommand a film for me",
+    "timestamp": "2025-07-24T13:56:17.784806",
+    "duration": 0.0,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-28T11:49:11.557448",
+    "duration": 1.95,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-28T12:17:37.220620",
+    "duration": 0.53,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "test test",
+    "timestamp": "2025-07-30T08:27:05.206290",
+    "duration": 4.39,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "a",
+    "timestamp": "2025-07-30T08:33:21.043998",
+    "duration": 0.56,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "aaa",
+    "timestamp": "2025-07-30T08:38:27.380523",
+    "duration": 11.13,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T08:41:43.355599",
+    "duration": 2.54,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T08:51:56.978538",
+    "duration": 0.59,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T09:13:01.138585",
+    "duration": 2.3,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "h",
+    "timestamp": "2025-07-30T09:33:13.850837",
+    "duration": 1.96,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T09:33:27.876680",
+    "duration": 1.5,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommand for me a floral parfum",
+    "timestamp": "2025-07-30T09:33:59.986941",
+    "duration": 4.93,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T09:37:06.437067",
+    "duration": 1.94,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T09:37:58.559400",
+    "duration": 2.25,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommand for me a hotel",
+    "timestamp": "2025-07-30T09:38:27.569101",
+    "duration": 3.86,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "we are a familly of 4 so what is tour recommandation ?",
+    "timestamp": "2025-07-30T09:39:13.344513",
+    "duration": 16.35,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "i want it in djerba",
+    "timestamp": "2025-07-30T09:39:47.346839",
+    "duration": 5.1,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T09:43:07.281404",
+    "duration": 2.33,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommand for a hotel in djerba",
+    "timestamp": "2025-07-30T09:43:43.091237",
+    "duration": 2.75,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "we are a family of 4 so baseyour recommandation on that",
+    "timestamp": "2025-07-30T09:44:30.236750",
+    "duration": 3.47,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommand a hotel in djerba",
+    "timestamp": "2025-07-30T09:48:49.989427",
+    "duration": 5.51,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "we are a family of 4 so baseyour recommandation on that",
+    "timestamp": "2025-07-30T09:48:55.877627",
+    "duration": 3.22,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "we are a family of 4 so base your recommandation on that",
+    "timestamp": "2025-07-30T09:50:16.140442",
+    "duration": 5.71,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
   }
 ]

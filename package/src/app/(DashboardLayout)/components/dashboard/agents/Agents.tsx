@@ -175,7 +175,7 @@ export default function AgentsPage() {
 
   const handleViewDetails = (agent: Agent) => {
     if (agent.status === 'inactif') {
-      toast.error("Erreur : cet agent est inactif", {
+      toast.error("cet agent est inactif", {
         position: 'top-right',
         autoClose: 3000,
       });
