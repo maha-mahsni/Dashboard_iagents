@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "next": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --host 0.0.0.0 --port 8000",
-    "dev": "concurrently \"npm run next\" \"npm run fastapi\"",
-    "deploy": "gh-pages -d out"
-  },
+  "next": "next dev",
+  "build": "next build",
+  "export": "next export",
+  "start": "next start",
+  "lint": "next lint",
+  "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --reload --port 8000",
+  "dev": "concurrently \"npm run next\" \"npm run fastapi\"",
+  "deploy": "npm run build && npm run export && gh-pages -d out"
+},
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.14.0",
