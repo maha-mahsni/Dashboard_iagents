@@ -10,7 +10,9 @@
   "lint": "next lint",
   "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --reload --port 8000",
   "dev": "concurrently \"npm run next\" \"npm run fastapi\"",
-  "deploy": "npm run build && npm run export && gh-pages -d out"
+  "deploy": "npm run build && npm run export && gh-pages -d out",
+  "homepage": "https://maha-mahsni.github.io/Dashboard_iagents/"
+
 },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
