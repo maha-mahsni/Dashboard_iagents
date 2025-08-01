@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --reload --port 8000",
+    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --host 0.0.0.0 --port 8000",
     "dev": "concurrently \"npm run next\" \"npm run fastapi\""
   },
   "dependencies": {

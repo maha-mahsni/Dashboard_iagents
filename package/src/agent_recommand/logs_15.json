@@ -358,5 +358,205 @@
     "duration": 5.71,
     "success": true,
     "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "hi",
+    "timestamp": "2025-07-30T10:04:11.609974",
+    "duration": 3.63,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum sucrée recommande toi pour moi",
+    "timestamp": "2025-07-30T12:08:23.008351",
+    "duration": 0.76,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum sucrée recommande toi pour moi",
+    "timestamp": "2025-07-30T12:10:30.980572",
+    "duration": 2.63,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum sucrée recommande toi pour moi?",
+    "timestamp": "2025-07-30T12:10:54.142150",
+    "duration": 4.16,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum sucrée recommande toi ?",
+    "timestamp": "2025-07-30T12:11:23.621842",
+    "duration": 2.26,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "non recommande un parfum sucrée",
+    "timestamp": "2025-07-30T12:11:46.385300",
+    "duration": 1.99,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "propose des parfums sucrées",
+    "timestamp": "2025-07-30T12:12:23.979209",
+    "duration": 1.84,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum sucré propose toi",
+    "timestamp": "2025-07-30T12:14:05.165343",
+    "duration": 3.25,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommande une parfum sucrée",
+    "timestamp": "2025-07-30T12:14:39.573661",
+    "duration": 3.07,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels parfum recommande toi pour une jeune de 21 ans?",
+    "timestamp": "2025-07-30T12:15:54.514918",
+    "duration": 3.86,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "propose des marques",
+    "timestamp": "2025-07-30T12:16:18.280620",
+    "duration": 4.4,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "donner le nom d'une !!",
+    "timestamp": "2025-07-30T12:17:59.262126",
+    "duration": 21.66,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "donner le nom d'une !!",
+    "timestamp": "2025-07-30T12:18:32.686441",
+    "duration": 4.3,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommande un parfum sucrée",
+    "timestamp": "2025-07-30T14:05:41.951610",
+    "duration": 10.5,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommande un parfume a l'odeur de candy",
+    "timestamp": "2025-07-30T14:07:09.345021",
+    "duration": 5.04,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "recommande un parfum sucrée",
+    "timestamp": "2025-07-30T14:14:31.698648",
+    "duration": 1.86,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "je veux et non pas fruité",
+    "timestamp": "2025-07-30T14:15:05.976054",
+    "duration": 1.23,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "Thierry Mugler Angel est mieux ?",
+    "timestamp": "2025-07-30T14:16:54.987169",
+    "duration": 1.4,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "aussi je veux un parfum floral pour une femme de 21ans",
+    "timestamp": "2025-07-30T14:17:35.651278",
+    "duration": 2.79,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quel type de dolce and gabbana florale exactement ?",
+    "timestamp": "2025-07-30T14:18:19.539541",
+    "duration": 3.6,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "Dolce & Gabbana Pour Femme c'est la couleur rose ?",
+    "timestamp": "2025-07-30T14:19:18.768547",
+    "duration": 2.64,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels jardin publique à djerba recommande toi ?",
+    "timestamp": "2025-07-31T11:31:37.330288",
+    "duration": 2.16,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "je veux une pour aller avec la famille",
+    "timestamp": "2025-07-31T11:36:56.598538",
+    "duration": 2.05,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels maison d'hote à djerba recommande toi ?",
+    "timestamp": "2025-08-01T08:12:40.139033",
+    "duration": 3.97,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels film recommande toi à regarder ?",
+    "timestamp": "2025-08-01T08:13:20.526914",
+    "duration": 5.09,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
   }
 ]
