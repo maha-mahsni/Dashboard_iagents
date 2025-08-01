@@ -4,6 +4,5 @@ const nextConfig = {
   images: { unoptimized: true } 
 };
 
-module.exports = {
-  basePath: '/Dashboard_iagents',
-}
+module.exports = nextConfig;
+
