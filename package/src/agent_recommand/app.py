@@ -16,6 +16,7 @@ from dateutil.parser import isoparse
 
 load_dotenv()
 app = FastAPI()
+
 chat_history = []
 
 app.add_middleware(
@@ -26,7 +27,8 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-API_KEY = "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"
+# Charger la clé API depuis les variables d'environnement
+API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 class ChatRequest(BaseModel):
     message: str
@@ -290,7 +292,7 @@ def get_pic_utilisation(agent_id: int):
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 EMAIL_SENDER = "mohsnimaha1@gmail.com"
-EMAIL_PASSWORD = "uevrbbroclgsomhw"
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_RECEIVER = "maha.mahsni@esprit.tn"
 
 def send_error_email(subject, body):

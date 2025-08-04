@@ -583,5 +583,13 @@
     "success": false,
     "api": "mistralai/mistral-7b-instruct",
     "error": "401 Client Error: Unauthorized for url: https://openrouter.ai/api/v1/chat/completions"
+  },
+  {
+    "agent_id": 15,
+    "message": "test",
+    "timestamp": "2025-08-04T10:13:09.958135",
+    "duration": 2.79,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
   }
 ]

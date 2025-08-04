@@ -614,7 +614,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
       <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
           <Typography variant="h4" fontWeight={800} color="text.primary" aria-label={`Tableau de bord de l'agent ${stats.nom}`}>
-            Dashboard de l'Agent {stats.nom}
+            Dashboard de l'Agent
           </Typography>
           <Tooltip title={mode === 'light' ? 'Passer en mode sombre' : 'Passer en mode clair'}>
             <IconButton onClick={toggleMode} aria-label={mode === 'light' ? 'Passer en mode sombre' : 'Passer en mode clair'} sx={{ color: 'text.primary' }}>
