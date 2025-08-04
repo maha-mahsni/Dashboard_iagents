@@ -2,13 +2,16 @@
   "name": "modernize-next-free",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://maha-mahsni.github.io/Dashboard_iagents/",
   "scripts": {
     "next": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start",
     "lint": "next lint",
-    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --host 0.0.0.0 --port 8000",
-    "dev": "concurrently \"npm run next\" \"npm run fastapi\""
+    "fastapi": "cd src/agent_recommand && python -m uvicorn app:app --reload --port 8000",
+    "dev": "concurrently \"npm run next\" \"npm run fastapi\"",
+    "deploy": "npm run build && npm run export && gh-pages -d out"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
@@ -16,9 +19,9 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "@mui/icons-material": "^7.0.1",
+    "@mui/icons-material": "^7.2.0",
     "@mui/lab": "^7.0.0-beta.10",
-    "@mui/material": "^7.0.1",
+    "@mui/material": "^7.2.0",
     "@prisma/client": "^6.11.1",
     "@tabler/icons-react": "^3.33.0",
     "apexcharts": "^4.7.0",
@@ -28,7 +31,7 @@
     "eslint-config-next": "13.4.12",
     "lodash": "^4.17.21",
     "lucide-react": "^0.525.0",
-    "next": "^15.3.5",
+    "next": "^15.4.5",
     "prisma": "^6.11.1",
     "react": "18.2.0",
     "react-apexcharts": "^1.7.0",
@@ -43,6 +46,7 @@
     "@types/react": "19.1.8",
     "@types/react-syntax-highlighter": "^15.5.13",
     "concurrently": "^9.2.0",
+    "gh-pages": "^6.3.0",
     "typescript": "5.8.3"
   }
 }

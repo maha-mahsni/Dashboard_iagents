@@ -558,5 +558,30 @@
     "duration": 5.09,
     "success": true,
     "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels serie korean recommande toi ?",
+    "timestamp": "2025-08-01T10:40:16.776289",
+    "duration": 0.45,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quels série korean recommande toi ?",
+    "timestamp": "2025-08-01T10:43:57.838877",
+    "duration": 6.57,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "testest",
+    "timestamp": "2025-08-04T08:45:19.653849",
+    "duration": 0.54,
+    "success": false,
+    "api": "mistralai/mistral-7b-instruct",
+    "error": "401 Client Error: Unauthorized for url: https://openrouter.ai/api/v1/chat/completions"
   }
 ]

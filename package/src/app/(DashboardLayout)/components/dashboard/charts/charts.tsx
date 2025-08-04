@@ -1,6 +1,31 @@
 'use client';
 import { useEffect, useState, useMemo, useCallback, memo } from 'react';
-import { Box, Paper, Typography, Stack, useTheme, LinearProgress, Chip, Divider, Fade, Slide, IconButton, Tooltip, Collapse, Skeleton, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Typography,
+  Stack,
+  useTheme,
+  LinearProgress,
+  Chip,
+  Divider,
+  Fade,
+  Slide,
+  Zoom,
+  IconButton,
+  Tooltip,
+  Collapse,
+  Skeleton,
+  Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import dynamic from 'next/dynamic';
 import type { ApexOptions } from 'apexcharts';
@@ -25,6 +50,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import ListIcon from '@mui/icons-material/List';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -41,33 +67,32 @@ const getTheme = (mode: 'light' | 'dark') =>
     palette: {
       mode,
       primary: { main: '#1e88e5', light: '#6ab7ff', dark: '#005cb2' },
-      secondary: { main: '#00c4b4', light: '#5df5e8', dark: '#009688' },
+      secondary: { main: '#6ab7ff', light: '#b3e5fc', dark: '#1976d2' }, // Variante de bleu plus claire
       background: {
-        default: mode === 'light' ? '#f7fafc' : '#1f2937',
-        paper: mode === 'light' ? '#ffffff' : '#2d3748',
+        default: mode === 'light' ? '#f5f7fa' : '#1a1f2e',
+        paper: mode === 'light' ? '#ffffff' : '#222b40',
       },
-      divider: mode === 'light' ? '#e2e8f0' : '#4b5563',
+      divider: mode === 'light' ? '#e0e6ed' : '#3a4463',
       text: {
-        primary: mode === 'light' ? '#1f2937' : '#e5e7eb',
-        secondary: mode === 'light' ? '#6b7280' : '#9ca3af',
+        primary: mode === 'light' ? '#1a1f2e' : '#e0e7f3',
+        secondary: mode === 'light' ? '#6b7280' : '#a0b0c0',
       },
-      success: { main: '#1e88e5', light: '#6ab7ff', dark: '#005cb2' }, // Bleu pour "actif"
-      error: { main: '#f44336', light: '#f87171', dark: '#b91c1c' },    // Rouge pour erreurs
+      error: { main: '#f44336', light: '#e57373', dark: '#d32f2f' },
     },
     components: {
       MuiPaper: {
         styleOverrides: {
           root: {
-            borderRadius: '16px',
-            boxShadow: mode === 'light' ? '0 6px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)' : '0 8px 32px rgba(0,0,0,0.3)',
-            background: mode === 'light' ? '#ffffff' : 'linear-gradient(145deg, #2d3748, #1f2937)',
-            border: `1px solid ${mode === 'light' ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`,
-            backdropFilter: 'blur(12px)',
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            borderRadius: '20px',
+            boxShadow: mode === 'light' ? '0 10px 30px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06)' : '0 12px 40px rgba(0,0,0,0.4)',
+            background: mode === 'light' ? 'linear-gradient(135deg, #ffffff, #f0f4f8)' : 'linear-gradient(135deg, #222b40, #1a1f2e)',
+            border: `1px solid ${mode === 'light' ? 'rgba(30, 136, 229, 0.2)' : 'rgba(30, 136, 229, 0.1)'}`,
+            backdropFilter: 'blur(20px)',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             '&:hover': {
-              transform: 'scale(1.02)',
-              boxShadow: mode === 'light' ? '0 10px 32px rgba(0,0,0,0.15)' : '0 12px 40px rgba(0,0,0,0.4)',
-              borderColor: mode === 'light' ? '#6ab7ff' : '#005cb2',
+              transform: 'scale(1.03)',
+              boxShadow: mode === 'light' ? '0 14px 40px rgba(0,0,0,0.15)' : '0 16px 50px rgba(0,0,0,0.5)',
+              borderColor: mode === 'light' ? '#1e88e5' : '#6ab7ff',
             },
           },
         },
@@ -78,18 +103,19 @@ const getTheme = (mode: 'light' | 'dark') =>
             borderRadius: '24px',
             fontWeight: 600,
             padding: '4px 12px',
-            background: mode === 'light' ? 'linear-gradient(145deg, #e0e7ff, #c7d2fe)' : 'linear-gradient(145deg, #4b5563, #374151)',
+            background: mode === 'light' ? 'linear-gradient(135deg, #e0f7fa, #b2ebf2)' : 'linear-gradient(135deg, #2a3d50, #1e2a38)',
+            boxShadow: '0 2px 6px rgba(30, 136, 229, 0.2)',
           },
         },
       },
       MuiButton: {
         styleOverrides: {
           root: {
-            borderRadius: '8px',
+            borderRadius: '12px',
             textTransform: 'none',
             fontWeight: 600,
-            padding: '8px 20px',
-            boxShadow: mode === 'light' ? '0 2px 8px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.3)',
+            padding: '10px 24px',
+            boxShadow: '0 4px 12px rgba(30, 136, 229, 0.3)',
           },
         },
       },
@@ -123,6 +149,7 @@ interface LogEntry {
   message: string;
   duration?: number;
   success?: boolean;
+  error?: string;
 }
 
 interface CourbePoint {
@@ -141,11 +168,11 @@ interface ChartsProps {
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   '&:hover': {
-    transform: 'scale(1.02)',
-    boxShadow: theme.palette.mode === 'light' ? '0 10px 32px rgba(0,0,0,0.15)' : '0 12px 40px rgba(0,0,0,0.4)',
+    transform: 'scale(1.03)',
+    boxShadow: theme.palette.mode === 'light' ? '0 14px 40px rgba(0,0,0,0.15)' : '0 16px 50px rgba(0,0,0,0.5)',
     borderColor: theme.palette.primary.light,
   },
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 }));
 
 function ChartsComponent({ agentId }: ChartsProps) {
@@ -158,9 +185,12 @@ function ChartsComponent({ agentId }: ChartsProps) {
   const [error, setError] = useState<string | null>(null);
   const [isDataReady, setIsDataReady] = useState(false);
   const [expandedLog, setExpandedLog] = useState<number | null>(null);
-  const [expandedSections, setExpandedSections] = useState({ details: true, performance: true, logs: true, usage: true });
+  const [expandedSections, setExpandedSections] = useState({ details: true, performance: true, recentLogs: true, usage: true, allLogs: true });
   const [isRetrying, setIsRetrying] = useState(false);
   const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all');
+  const [openAllLogsDialog, setOpenAllLogsDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [selectedErrorLog, setSelectedErrorLog] = useState<LogEntry | null>(null);
 
   const fetchData = useCallback(
     debounce(async () => {
@@ -191,7 +221,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
           : [];
 
         setStats(statsRes);
-        setLogs(logsRes.slice(-5).reverse());
+        setLogs(logsRes);
         setPerformance({ ...perfRes, courbe: validCourbe });
         setPicData({
           heure: picRes.heure_pic || '00h',
@@ -219,16 +249,30 @@ function ChartsComponent({ agentId }: ChartsProps) {
     };
   }, [fetchData]);
 
-  const getLogIcon = useCallback((log: LogEntry) => {
-    if (log.message.toLowerCase().includes('timeout') || log.success === false)
-      return <ErrorIcon fontSize="small" color="error" />;
-    if ((log.duration ?? 0) > 3)
+  const getLogIcon = useCallback((log: LogEntry, index: number) => {
+    if (log.message.toLowerCase().includes('timeout') || log.success === false) {
+      return (
+        <Tooltip title="Voir les détails de l'erreur">
+          <IconButton
+            onClick={() => {
+              setSelectedErrorLog(log);
+              setOpenErrorDialog(true);
+            }}
+            sx={{ p: 0 }}
+            aria-label={`Voir les détails de l'erreur pour le log ${index + 1}`}
+          >
+            <ErrorIcon fontSize="small" color="error" />
+          </IconButton>
+        </Tooltip>
+      );
+    }
+    if ((log.duration ?? 0) > 3) {
       return <WarningIcon fontSize="small" color="warning" />;
+    }
     return <InfoIcon fontSize="small" color="info" />;
   }, []);
 
   const getStatusChip = (etat: string) => {
-    console.log('État reçu dans getStatusChip:', etat); // Vérification de l'entrée
     const etatLower = etat.toLowerCase().trim();
     if (etatLower === 'actif') {
       return (
@@ -269,11 +313,22 @@ function ChartsComponent({ agentId }: ChartsProps) {
     setMode(prev => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
-  const filteredLogs = useMemo(() => {
+  const getRecentLogs = useMemo(() => {
+    if (logFilter === 'all') return logs.slice(-5);
+    return logs.filter(log => {
+      if (logFilter === 'error') return log.message.toLowerCase().includes('timeout') || log.success === false;
+      if (logFilter === 'warning') return (log.duration ?? 0) > 3;
+      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false && (log.duration ?? 0) <= 3;
+      return true;
+    }).slice(-5);
+  }, [logs, logFilter]);
+
+  const getAllLogs = useMemo(() => {
     if (logFilter === 'all') return logs;
     return logs.filter(log => {
       if (logFilter === 'error') return log.message.toLowerCase().includes('timeout') || log.success === false;
       if (logFilter === 'warning') return (log.duration ?? 0) > 3;
+      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false && (log.duration ?? 0) <= 3;
       return true;
     });
   }, [logs, logFilter]);
@@ -288,10 +343,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
     () => ({
       chart: {
         id: 'realtime',
-        toolbar: {
-          show: false,
-          tools: { download: false, selection: true },
-        },
+        toolbar: { show: false, tools: { download: false, selection: true } },
         type: 'area',
         foreColor: theme.palette.text.secondary,
         fontFamily: theme.typography.fontFamily,
@@ -374,14 +426,14 @@ function ChartsComponent({ agentId }: ChartsProps) {
         style: {
           fontFamily: theme.typography.fontFamily,
           fontSize: '13px',
-          background: mode === 'dark' ? '#1e1e2f' : '#ffffff',
+          background: mode === 'dark' ? '#1a1f2e' : '#ffffff',
           borderRadius: '8px',
         },
         marker: { show: true },
         custom: ({ series, seriesIndex, dataPointIndex }) => {
           const data = performance?.courbe?.[dataPointIndex];
           return `
-            <div style="padding: 12px; border-radius: 8px; background: ${mode === 'dark' ? '#1e1e2f' : '#ffffff'}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <div style="padding: 12px; border-radius: 8px; background: ${mode === 'dark' ? '#1a1f2e' : '#ffffff'}; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
               <strong>${data?.time || 'N/A'}</strong><br/>
               Temps: ${series[seriesIndex][dataPointIndex].toFixed(2)}s
             </div>
@@ -395,9 +447,8 @@ function ChartsComponent({ agentId }: ChartsProps) {
         strokeWidth: 2,
         hover: { size: 6 },
       },
-      
     }),
-    [theme, performance, averageDuration, mode]
+    [theme, performance, mode]
   );
 
   const radialChartOptions: ApexOptions = useMemo(
@@ -418,7 +469,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
           hollow: {
             size: '68%',
             margin: 12,
-            background: mode === 'dark' ? '#1e1e2f' : '#f8fafc',
+            background: mode === 'dark' ? '#1a1f2e' : '#f5f7fa',
             dropShadow: {
               enabled: true,
               top: 2,
@@ -454,7 +505,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
             },
           },
           track: {
-            background: mode === 'dark' ? '#2a2a3f' : '#e0e7ff',
+            background: mode === 'dark' ? '#2a3d50' : '#e0f7fa',
             strokeWidth: '100%',
             margin: 6,
             dropShadow: {
@@ -491,27 +542,40 @@ function ChartsComponent({ agentId }: ChartsProps) {
     [theme, picData, mode]
   );
 
+  const handleOpenAllLogsDialog = () => {
+    setOpenAllLogsDialog(true);
+  };
+
+  const handleCloseAllLogsDialog = () => {
+    setOpenAllLogsDialog(false);
+  };
+
+  const handleCloseErrorDialog = () => {
+    setOpenErrorDialog(false);
+    setSelectedErrorLog(null);
+  };
+
   if (error) return (
     <Fade in timeout={1000}>
       <StyledPaper sx={{
         p: 4,
         textAlign: 'center',
-        bgcolor: mode === 'dark' ? '#1e1e2f' : '#fef2f2',
-        borderRadius: 16,
+        bgcolor: mode === 'dark' ? '#1a1f2e' : '#fff3f3',
+        borderRadius: 20,
         border: `1px solid ${theme.palette.error.main}`,
-        maxWidth: 480,
+        maxWidth: 500,
         mx: 'auto',
         my: 8,
-        boxShadow: '0 6px 24px rgba(0,0,0,0.08)',
-        backdropFilter: 'blur(12px)',
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        '&:hover': { transform: 'scale(1.03)', boxShadow: '0 10px 32px rgba(0,0,0,0.15)' },
+        boxShadow: '0 10px 30px rgba(244, 67, 54, 0.1), 0 4px 8px rgba(244, 67, 54, 0.06)',
+        backdropFilter: 'blur(20px)',
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': { transform: 'scale(1.04)', boxShadow: '0 14px 40px rgba(244, 67, 54, 0.15)' },
       }}>
-        <ErrorIcon color="error" sx={{ fontSize: 64, mb: 2, opacity: 0.9 }} />
-        <Typography variant="h5" color="error.main" fontWeight={700} gutterBottom>
-          Erreur de chargement
+        <ErrorIcon color="error" sx={{ fontSize: 72, mb: 3, opacity: 0.9 }} />
+        <Typography variant="h4" color="error.main" fontWeight={800} gutterBottom>
+          Erreur Système
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto', lineHeight: 1.6, mb: 3 }}>
+        <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 400, mx: 'auto', lineHeight: 1.6, mb: 4 }}>
           {error}
         </Typography>
         <Button
@@ -520,7 +584,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
           startIcon={<RefreshIcon />}
           onClick={fetchData}
           disabled={isRetrying}
-          sx={{ borderRadius: 8, textTransform: 'none', fontWeight: 600 }}
+          sx={{ borderRadius: 12, textTransform: 'none', fontWeight: 600, padding: '12px 28px' }}
           aria-label="Réessayer le chargement des données"
         >
           {isRetrying ? 'Réessai en cours...' : 'Réessayer'}
@@ -535,7 +599,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
         <Skeleton variant="text" width={200} height={40} sx={{ mb: 4 }} />
         <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' }} gap={3}>
           {[...Array(4)].map((_, index) => (
-            <StyledPaper key={index} sx={{ p: 3, borderRadius: 16, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}` }}>
+            <StyledPaper key={index} sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}` }}>
               <Skeleton variant="rectangular" height={40} sx={{ mb: 2, borderRadius: 4 }} />
               <Skeleton variant="rectangular" height={200} sx={{ borderRadius: 4 }} />
             </StyledPaper>
@@ -549,7 +613,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
     <ThemeProvider theme={getTheme(mode)}>
       <Box sx={{ p: { xs: 2, md: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}>
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          <Typography variant="h4" fontWeight={700} color="text.primary" aria-label={`Tableau de bord de l'agent ${stats.nom}`}>
+          <Typography variant="h4" fontWeight={800} color="text.primary" aria-label={`Tableau de bord de l'agent ${stats.nom}`}>
             Dashboard de l'Agent {stats.nom}
           </Typography>
           <Tooltip title={mode === 'light' ? 'Passer en mode sombre' : 'Passer en mode clair'}>
@@ -560,11 +624,9 @@ function ChartsComponent({ agentId }: ChartsProps) {
         </Box>
 
         <Stack spacing={4}>
-          {/* Section Statistiques et Performance */}
           <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' }} gap={3}>
-            {/* Carte Détails Agent */}
             <Slide in direction="up" timeout={1000}>
-              <StyledPaper sx={{ p: 3, borderRadius: 16, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(12px)' }}>
+              <StyledPaper sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(20px)' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                   <Box display="flex" alignItems="center" gap={2}>
                     <MemoryIcon color="primary" sx={{ fontSize: 40 }} />
@@ -589,7 +651,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
                             <Chip
                               label={stats.executions}
                               size="small"
-                              sx={{ fontWeight: 600, minWidth: 80, background: 'linear-gradient(145deg, #1e88e5, #005cb2)', color: '#ffffff' }}
+                              sx={{ fontWeight: 600, minWidth: 80, background: 'linear-gradient(135deg, #1e88e5, #005cb2)', color: '#ffffff' }}
                             />
                             <Box
                               sx={{
@@ -597,7 +659,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
                                 width: 12,
                                 height: 12,
                                 borderRadius: '50%',
-                                bgcolor: '#00c4b4',
+                                bgcolor: '#6ab7ff',
                                 animation: 'pulse 1.5s infinite',
                                 '@keyframes pulse': {
                                   '0%': { transform: 'scale(1)', opacity: 0.7 },
@@ -635,9 +697,8 @@ function ChartsComponent({ agentId }: ChartsProps) {
               </StyledPaper>
             </Slide>
 
-            {/* Carte Performance */}
             <Slide in direction="up" timeout={1000}>
-              <StyledPaper sx={{ p: 3, borderRadius: 16, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(12px)' }}>
+              <StyledPaper sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(20px)' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                   <Box display="flex" alignItems="center" gap={2}>
                     <ShowChartIcon color="primary" sx={{ fontSize: 40 }} />
@@ -667,11 +728,9 @@ function ChartsComponent({ agentId }: ChartsProps) {
             </Slide>
           </Box>
 
-          {/* Section Logs et Utilisation */}
           <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr' }} gap={3}>
-            {/* Carte Logs */}
             <Slide in direction="up" timeout={1000}>
-              <StyledPaper sx={{ p: 3, borderRadius: 16, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(12px)' }}>
+              <StyledPaper sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(20px)' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                   <Box display="flex" alignItems="center" gap={2}>
                     <HistoryIcon color="primary" sx={{ fontSize: 40 }} />
@@ -688,7 +747,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
                         label="Filtrer"
                         onChange={(e) => setLogFilter(e.target.value as typeof logFilter)}
                         sx={{ borderRadius: 12, bgcolor: theme.palette.background.paper }}
-                        aria-label="Filtrer les logs"
+                        aria-label="Filtrer les logs récents"
                       >
                         <MenuItem value="all">Tous</MenuItem>
                         <MenuItem value="error">Erreurs</MenuItem>
@@ -696,22 +755,22 @@ function ChartsComponent({ agentId }: ChartsProps) {
                         <MenuItem value="info">Infos</MenuItem>
                       </Select>
                     </FormControl>
-                    <Tooltip title={expandedSections.logs ? 'Réduire' : 'Agrandir'}>
-                      <IconButton onClick={() => toggleSection('logs')} aria-label={expandedSections.logs ? 'Réduire les logs récents' : 'Agrandir les logs récents'}>
-                        {expandedSections.logs ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    <Tooltip title={expandedSections.recentLogs ? 'Réduire' : 'Agrandir'}>
+                      <IconButton onClick={() => toggleSection('recentLogs')} aria-label={expandedSections.recentLogs ? 'Réduire les logs récents' : 'Agrandir les logs récents'}>
+                        {expandedSections.recentLogs ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                       </IconButton>
                     </Tooltip>
                   </Box>
                 </Box>
-                <Collapse in={expandedSections.logs}>
+                <Collapse in={expandedSections.recentLogs}>
                   <Box sx={{
-                    bgcolor: mode === 'dark' ? '#1e1e2f' : '#f9fafc',
+                    bgcolor: mode === 'dark' ? '#1a1f2e' : '#f5f7fa',
                     borderRadius: 8,
                     p: 2,
                     border: `1px solid ${theme.palette.divider}`,
                   }}>
                     <Stack spacing={1.5} role="log" aria-label="Liste des logs récents">
-                      {filteredLogs.length > 0 ? filteredLogs.map((log, index) => (
+                      {getRecentLogs.length > 0 ? getRecentLogs.map((log, index) => (
                         <Fade in key={index} timeout={1000 + index * 100}>
                           <Box
                             display="flex"
@@ -721,14 +780,14 @@ function ChartsComponent({ agentId }: ChartsProps) {
                               p: 1.5,
                               borderRadius: 8,
                               bgcolor: 'background.paper',
-                              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                              '&:hover': { bgcolor: theme.palette.action.hover, transform: 'translateX(4px)' },
+                              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                              '&:hover': { bgcolor: theme.palette.action.hover, transform: 'translateX(6px)' },
                             }}
                           >
                             <Typography variant="caption" color="text.secondary" sx={{ minWidth: 70, fontWeight: 500 }}>
                               {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </Typography>
-                            <Box sx={{ width: 24 }}>{getLogIcon(log)}</Box>
+                            <Box sx={{ width: 24 }}>{getLogIcon(log, index)}</Box>
                             <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500, lineHeight: 1.5 }}>
                               {formatLogMessage(log, index)}
                             </Typography>
@@ -762,9 +821,8 @@ function ChartsComponent({ agentId }: ChartsProps) {
               </StyledPaper>
             </Slide>
 
-            {/* Carte Utilisation */}
             <Slide in direction="up" timeout={1000}>
-              <StyledPaper sx={{ p: 3, borderRadius: 16, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(12px)' }}>
+              <StyledPaper sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(20px)' }}>
                 <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
                   <Box display="flex" alignItems="center" gap={2}>
                     <EqualizerIcon color="primary" sx={{ fontSize: 40 }} />
@@ -795,10 +853,10 @@ function ChartsComponent({ agentId }: ChartsProps) {
                     <StyledPaper sx={{
                       p: 2,
                       borderRadius: 8,
-                      bgcolor: mode === 'dark' ? '#1e1e2f' : '#f0f9ff',
+                      bgcolor: mode === 'dark' ? '#1a1f2e' : '#e0f7fa',
                       border: `1px solid ${theme.palette.divider}`,
-                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      '&:hover': { boxShadow: '0 4px 16px rgba(0,0,0,0.1)' },
+                      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': { boxShadow: '0 6px 20px rgba(0,0,0,0.1)' },
                     }}>
                       <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
                         Consommation des ressources
@@ -817,7 +875,276 @@ function ChartsComponent({ agentId }: ChartsProps) {
               </StyledPaper>
             </Slide>
           </Box>
+
+          <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr', lg: '1fr' }} gap={3}>
+            <Slide in direction="up" timeout={1000}>
+              <StyledPaper sx={{ p: 3, borderRadius: 20, bgcolor: 'background.paper', border: `1px solid ${theme.palette.divider}`, backdropFilter: 'blur(20px)' }}>
+                <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
+                  <Box display="flex" alignItems="center" gap={2}>
+                    <ListIcon color="primary" sx={{ fontSize: 40 }} />
+                    <Typography variant="h5" fontWeight={700} color="text.primary">
+                      Tous les Logs
+                    </Typography>
+                  </Box>
+                  <Tooltip title="Afficher tous les logs">
+                    <IconButton onClick={handleOpenAllLogsDialog} aria-label="Afficher tous les logs">
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                <Collapse in={expandedSections.allLogs}>
+                  <Typography variant="body2" color="text.secondary" textAlign="center" py={2}>
+                    Cliquez pour voir l'historique complet des logs.
+                  </Typography>
+                </Collapse>
+              </StyledPaper>
+            </Slide>
+          </Box>
         </Stack>
+
+        <Dialog
+          open={openAllLogsDialog}
+          onClose={handleCloseAllLogsDialog}
+          maxWidth="md"
+          fullWidth
+          aria-labelledby="all-logs-dialog-title"
+        >
+          <DialogTitle id="all-logs-dialog-title">
+            <Box display="flex" alignItems="center" gap={2}>
+              <HistoryIcon color="primary" />
+              <Typography variant="h5" fontWeight={700}>Historique Complet des Logs</Typography>
+            </Box>
+          </DialogTitle>
+          <DialogContent>
+            <Box sx={{
+              bgcolor: mode === 'dark' ? '#1a1f2e' : '#f5f7fa',
+              borderRadius: 8,
+              p: 2,
+              border: `1px solid ${theme.palette.divider}`,
+              maxHeight: '60vh',
+              overflowY: 'auto',
+            }}>
+              <Stack spacing={1.5} role="log" aria-label="Liste de tous les logs">
+                {getAllLogs.length > 0 ? getAllLogs.map((log, index) => (
+                  <Fade in key={index} timeout={1000 + index * 100}>
+                    <Box
+                      display="flex"
+                      gap={2}
+                      alignItems="center"
+                      sx={{
+                        p: 1.5,
+                        borderRadius: 8,
+                        bgcolor: 'background.paper',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                        '&:hover': { bgcolor: theme.palette.action.hover, transform: 'translateX(6px)' },
+                      }}
+                    >
+                      <Typography variant="caption" color="text.secondary" sx={{ minWidth: 70, fontWeight: 500 }}>
+                        {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </Typography>
+                      <Box sx={{ width: 24 }}>{getLogIcon(log, index)}</Box>
+                      <Typography variant="body2" sx={{ flexGrow: 1, fontWeight: 500, lineHeight: 1.5 }}>
+                        {formatLogMessage(log, index)}
+                      </Typography>
+                      {log.message.length > 50 && (
+                        <Tooltip title={expandedLog === index ? 'Réduire' : 'Agrandir'}>
+                          <IconButton
+                            size="small"
+                            onClick={() => setExpandedLog(expandedLog === index ? null : index)}
+                            sx={{ ml: 'auto', color: theme.palette.text.secondary }}
+                            aria-label={expandedLog === index ? `Réduire le log ${index + 1}` : `Agrandir le log ${index + 1}`}
+                          >
+                            <ExpandMoreIcon
+                              sx={{
+                                transform: expandedLog === index ? 'rotate(180deg)' : 'rotate(0deg)',
+                                transition: 'transform 0.3s ease',
+                              }}
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                    </Box>
+                  </Fade>
+                )) : (
+                  <Typography variant="body2" color="text.secondary" textAlign="center" py={2} fontWeight={500}>
+                    Aucun log disponible
+                  </Typography>
+                )}
+              </Stack>
+            </Box>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog
+          open={openErrorDialog}
+          onClose={handleCloseErrorDialog}
+          maxWidth="sm"
+          fullWidth
+          aria-labelledby="error-dialog-title"
+          TransitionComponent={Zoom}
+          TransitionProps={{ timeout: 500 }}
+          PaperProps={{
+            sx: {
+              maxWidth: '680px',
+              margin: 'auto',
+              borderRadius: '24px',
+              boxShadow: '0 16px 50px rgba(244, 67, 54, 0.2), 0 8px 20px rgba(244, 67, 54, 0.1)',
+              background: mode === 'dark' ? 'linear-gradient(135deg, #222b40, #1a1f2e)' : 'linear-gradient(135deg, #ffffff, #f0f4f8)',
+              backdropFilter: 'blur(25px)',
+              border: mode === 'dark' ? '1px solid rgba(244, 67, 54, 0.2)' : '1px solid rgba(244, 67, 54, 0.1)',
+              transition: 'transform 0.5s ease, box-shadow 0.5s ease',
+              '&:hover': {
+                transform: 'scale(1.04)',
+                boxShadow: '0 20px 60px rgba(244, 67, 54, 0.25), 0 10px 25px rgba(244, 67, 54, 0.15)',
+              },
+            },
+          }}
+        >
+          <DialogTitle id="error-dialog-title" sx={{ p: 4, borderBottom: `1px solid ${theme.palette.divider}` }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 3,
+                background: mode === 'dark' ? 'rgba(244, 67, 54, 0.1)' : 'rgba(244, 67, 54, 0.05)',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: 'inset 0 4px 8px rgba(0, 0, 0, 0.1)',
+                transition: 'background 0.3s ease',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: 56,
+                  height: 56,
+                  borderRadius: '50%',
+                  background: `linear-gradient(135deg, ${theme.palette.error.light}, ${theme.palette.error.dark})`,
+                  boxShadow: '0 6px 16px rgba(244, 67, 54, 0.4), inset 0 0 10px rgba(255, 255, 255, 0.3)',
+                  color: '#fff',
+                  animation: 'neonPulse 2s infinite',
+                  '@keyframes neonPulse': {
+                    '0%': { boxShadow: '0 0 5px #f44336, 0 0 10px #f44336, 0 0 15px #e57373, inset 0 0 5px #fff' },
+                    '50%': { boxShadow: '0 0 10px #f44336, 0 0 20px #f44336, 0 0 25px #e57373, inset 0 0 10px #fff' },
+                    '100%': { boxShadow: '0 0 5px #f44336, 0 0 10px #f44336, 0 0 15px #e57373, inset 0 0 5px #fff' },
+                  },
+                }}
+              >
+                <ErrorIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography
+                variant="h4"
+                fontWeight={900}
+                color={theme.palette.error.main}
+                sx={{
+                  letterSpacing: '1px',
+                  textShadow: '0 2px 4px rgba(244, 67, 54, 0.3)',
+                  lineHeight: 1.2,
+                }}
+              >
+                Alerte Critique
+              </Typography>
+            </Box>
+          </DialogTitle>
+          <DialogContent sx={{ p: 4 }}>
+            {selectedErrorLog ? (
+              <Stack spacing={3}>
+                <Box
+                  sx={{
+                    background: mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : '#fff',
+                    borderRadius: '16px',
+                    padding: '28px',
+                    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.08), inset 0 2px 4px rgba(244, 67, 54, 0.1)',
+                    borderLeft: `8px solid ${theme.palette.error.main}`,
+                  }}
+                >
+                  <Typography variant="h6" sx={{ fontSize: '18px', color: theme.palette.text.primary, mb: 2, fontWeight: 700 }}>
+                    Incident détecté
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ fontSize: '15px', color: theme.palette.text.secondary, mb: 1, fontWeight: 500 }}
+                  >
+                    Détails de l'erreur :
+                  </Typography>
+                  <Typography variant="body1" sx={{ fontWeight: 600, mb: 1, color: theme.palette.text.primary }}>
+                    Message : {selectedErrorLog.message}
+                  </Typography>
+                  {selectedErrorLog.error && (
+                    <Typography variant="body1" sx={{ fontWeight: 600, color: theme.palette.error.main }}>
+                      Cause : {selectedErrorLog.error}
+                    </Typography>
+                  )}
+                </Box>
+                <Box
+                  sx={{
+                    background: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : '#f9fafb',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    borderLeft: `6px solid ${theme.palette.primary.main}`,
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.04)',
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontSize: '14px',
+                      color: theme.palette.text.secondary,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Timestamp :{' '}
+                    <strong>
+                      {new Date(selectedErrorLog.timestamp).toLocaleString('fr-FR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        timeZone: 'CET',
+                      })}
+                      {' (09:44 AM CET)'}
+                    </strong>
+                  </Typography>
+                </Box>
+              </Stack>
+            ) : (
+              <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', fontWeight: 500 }}>
+                Aucune donnée d'erreur disponible.
+              </Typography>
+            )}
+          </DialogContent>
+          <DialogActions sx={{ p: 4, borderTop: `1px solid ${theme.palette.divider}` }}>
+            <Button
+              onClick={handleCloseErrorDialog}
+              color="primary"
+              variant="contained"
+              sx={{
+                borderRadius: '24px',
+                padding: '12px 32px',
+                fontSize: '16px',
+                fontWeight: 700,
+                textTransform: 'none',
+                background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                boxShadow: '0 6px 16px rgba(30, 136, 229, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3)',
+                '&:hover': {
+                  background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+                  boxShadow: '0 8px 20px rgba(30, 136, 229, 0.5), inset 0 3px 6px rgba(255, 255, 255, 0.4)',
+                  transform: 'translateY(-2px)',
+                },
+                '&:active': {
+                  transform: 'translateY(1px)',
+                  boxShadow: '0 4px 12px rgba(30, 136, 229, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
+                },
+              }}
+            >
+              Fermer
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </ThemeProvider>
   );

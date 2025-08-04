@@ -1,22 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from langdetect import detect
+from langdetect import detect, detect_langs
 from statistics import mean
 from datetime import datetime
 import requests, json, time
 import random
-from collections import defaultdict
-import json
+from collections import defaultdict, Counter
 import smtplib
 from email.message import EmailMessage
-from langdetect import detect_langs
-from fastapi import FastAPI, HTTPException
 import os
 from dotenv import load_dotenv
-from dateutil.parser import isoparse  
-from collections import Counter
+from dateutil.parser import isoparse
 
 load_dotenv()
 app = FastAPI()
@@ -24,22 +20,23 @@ chat_history = []
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], allow_credentials=True,
-    allow_methods=["*"], allow_headers=["*"]
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
-API_KEY = ""
+API_KEY = "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"
 
 class ChatRequest(BaseModel):
     message: str
 
 def get_log_file_path(agent_id):
-    
     return f"logs_{agent_id}.json"
 
 @app.post("/chat")
 async def chat(request: ChatRequest):
-    agent_id = 15  # À modifier dynamiquement si nécessaire (par exemple, via un paramètre)
+    agent_id = 15
     user_input = request.message.strip()
     if not user_input:
         return JSONResponse(content={"error": "Message manquant"}, status_code=400)
@@ -49,7 +46,7 @@ async def chat(request: ChatRequest):
         if langs and langs[0].prob > 0.80:
             user_lang = langs[0].lang
         else:
-            user_lang = "en"  # par défaut
+            user_lang = "en"
     except:
         user_lang = "fr"
     system_message = f"""
@@ -59,14 +56,9 @@ Tu prends en compte tout le contexte de la conversation précédente pour répon
 Tu dois TOUJOURS répondre dans la langue détectée et n'utilise jamais le swahili et oublié le mot swahili completement : {user_lang}.
 """
 
-    # 🧠 Appel à l’API externe
     messages = [{"role": "system", "content": system_message}]
-
-    # Ajouter jusqu'à 10 derniers messages pour garder le contexte conversationnel
     nb_max = 15
-    messages.extend(chat_history[-nb_max:])  # Alternance user/assistant
-
-    # Ajouter le message courant avec langue détectée
+    messages.extend(chat_history[-nb_max:])
     user_input_lang = f"[Langue détectée : {user_lang}]\n{user_input}"
     messages.append({"role": "user", "content": user_input_lang})
     payload = {
@@ -92,7 +84,7 @@ Tu dois TOUJOURS répondre dans la langue détectée et n'utilise jamais le swah
         success = "choices" in data
 
         api_used = payload["model"]
-        _log(user_input, duration, success, agent_id, api_used)
+        _log(user_input, duration, success, agent_id, api_used, error=None if success else "Réponse JSON invalide ou incomplète")
 
         if not success:
             send_error_email(
@@ -108,16 +100,16 @@ Tu dois TOUJOURS répondre dans la langue détectée et n'utilise jamais le swah
 
     except Exception as e:
         duration = round(time.time() - start, 2)
-        _log(user_input, duration, False, agent_id, payload["model"])
+        error_message = str(e)
+        _log(user_input, duration, False, agent_id, payload["model"], error=error_message)
         print("Envoi de l'email d'erreur en cours...")
         send_error_email(
             subject="Erreur de l'agent de Recommandation IA",
-            body=f"Une erreur est survenue pendant la requête.\n\nMessage: {user_input}\nErreur: {str(e)}"
+            body=f"Une erreur est survenue pendant la requête.\n\nMessage: {user_input}\nErreur: {error_message}"
         )
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        return JSONResponse(content={"error": error_message}, status_code=500)
 
-# 🔄 Fonction pour enregistrer les logs avec l'API utilisée
-def _log(message, duration, success, agent_id, api_used):
+def _log(message, duration, success, agent_id, api_used, error=None):
     log_entry = {
         "agent_id": agent_id,
         "message": message,
@@ -126,6 +118,8 @@ def _log(message, duration, success, agent_id, api_used):
         "success": success,
         "api": api_used
     }
+    if error:
+        log_entry["error"] = error  # Ajout du message d'erreur dans le log
     log_file = get_log_file_path(agent_id)
     try:
         try:
@@ -167,7 +161,8 @@ def get_stats(agent_id: int):
             "tokens": tokens_total,
             "cout": f"{cout_total}$",
             "api": api_used,
-            "etat": etat_agent
+            "etat": etat_agent,
+            "nom": f"Agent {agent_id}"
         }
     except (FileNotFoundError, json.JSONDecodeError):
         return _empty_stats()
@@ -183,7 +178,8 @@ def _empty_stats():
         "tokens": 0,
         "cout": "0.00$",
         "api": "inconnu",
-        "etat": "inactif"
+        "etat": "inactif",
+        "nom": "Agent Inconnu"
     }
 
 @app.get("/logs/{agent_id}")
@@ -196,9 +192,10 @@ def get_logs(agent_id: int):
             return logs
         return []
     except FileNotFoundError:
-        return []  # Retourner un tableau vide si le fichier n'existe pas
+        return []
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
 @app.get("/stats/realtime/{agent_id}")
 def get_realtime_stats(agent_id: int):
     try:
@@ -206,7 +203,7 @@ def get_realtime_stats(agent_id: int):
         with open(log_file, "r", encoding="utf-8") as f:
             logs = json.load(f)
 
-        last_logs = logs[-7:]  # Derniers 7 logs pour l’historique
+        last_logs = logs[-7:]
         timeline = []
         for log in last_logs:
             timeline.append({
@@ -232,7 +229,7 @@ def activite_par_heure(agent_id: int):
                 heure = datetime.fromisoformat(log["timestamp"]).strftime("%Hh")
                 histogramme[heure] += 1
 
-        trié = dict(sorted(histogramme.items()))  # Trie les heures
+        trié = dict(sorted(histogramme.items()))
         return {"labels": list(trié.keys()), "data": list(trié.values())}
     except (FileNotFoundError, json.JSONDecodeError, Exception) as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
@@ -251,10 +248,11 @@ def get_performance(agent_id: int):
                     perf_par_heure[heure].append(entry["duration"])
             courbe = [{"time": heure, "duration": round(sum(durations) / len(durations), 2)} for heure, durations in sorted(perf_par_heure.items()) if durations]
         else:
-            courbe = []  # Tableau vide si pas de logs
+            courbe = []
         return {"courbe": courbe, "requetes_actives": 0, "file_attente": 0, "temps_reponse": 0}
     except Exception as e:
         return {"courbe": [], "requetes_actives": 0, "file_attente": 0, "temps_reponse": 0, "error": str(e)}, 500
+
 @app.get("/pic-usage/{agent_id}")
 def get_pic_utilisation(agent_id: int):
     log_file = f"logs_{agent_id}.json"
@@ -273,7 +271,7 @@ def get_pic_utilisation(agent_id: int):
                     heure = isoparse(log["timestamp"]).hour
                     heures.append(heure)
             except Exception:
-                continue  # Ignore les erreurs de parsing
+                continue
 
         if not heures:
             return {"utilisation": 0, "heure_pic": "Aucune donnée"}
@@ -290,8 +288,9 @@ def get_pic_utilisation(agent_id: int):
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
+
 EMAIL_SENDER = "mohsnimaha1@gmail.com"
-EMAIL_PASSWORD = ""
+EMAIL_PASSWORD = "uevrbbroclgsomhw"
 EMAIL_RECEIVER = "maha.mahsni@esprit.tn"
 
 def send_error_email(subject, body):
@@ -314,7 +313,6 @@ def send_error_email(subject, body):
                 </div>
 
                 <p style="font-size: 14px; color: #555;">Heure de détection : <strong>{datetime.now().strftime('%d/%m/%Y à %H:%M:%S')}</strong></p>
-
             </div>
         </body>
         </html>
@@ -327,6 +325,6 @@ def send_error_email(subject, body):
             smtp.login(EMAIL_SENDER, EMAIL_PASSWORD)
             smtp.send_message(msg)
 
-        print(" Email d’erreur envoyé avec succès.")
+        print("Email d’erreur envoyé avec succès.")
     except Exception as e:
-        print(" Erreur lors de l'envoi de l'email :", e)
+        print("Erreur lors de l'envoi de l'email :", e)
