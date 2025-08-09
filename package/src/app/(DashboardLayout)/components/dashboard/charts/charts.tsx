@@ -33,7 +33,6 @@ import { debounce } from 'lodash';
 
 // Icônes Material-UI
 import InfoIcon from '@mui/icons-material/Info';
-import WarningIcon from '@mui/icons-material/Warning';
 import ErrorIcon from '@mui/icons-material/Error';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -67,7 +66,7 @@ const getTheme = (mode: 'light' | 'dark') =>
     palette: {
       mode,
       primary: { main: '#1e88e5', light: '#6ab7ff', dark: '#005cb2' },
-      secondary: { main: '#6ab7ff', light: '#b3e5fc', dark: '#1976d2' }, // Variante de bleu plus claire
+      secondary: { main: '#6ab7ff', light: '#b3e5fc', dark: '#1976d2' },
       background: {
         default: mode === 'light' ? '#f5f7fa' : '#1a1f2e',
         paper: mode === 'light' ? '#ffffff' : '#222b40',
@@ -187,7 +186,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
   const [expandedLog, setExpandedLog] = useState<number | null>(null);
   const [expandedSections, setExpandedSections] = useState({ details: true, performance: true, recentLogs: true, usage: true, allLogs: true });
   const [isRetrying, setIsRetrying] = useState(false);
-  const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warning' | 'info'>('all');
+  const [logFilter, setLogFilter] = useState<'all' | 'error' | 'info'>('all');
   const [openAllLogsDialog, setOpenAllLogsDialog] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [selectedErrorLog, setSelectedErrorLog] = useState<LogEntry | null>(null);
@@ -266,9 +265,6 @@ function ChartsComponent({ agentId }: ChartsProps) {
         </Tooltip>
       );
     }
-    if ((log.duration ?? 0) > 3) {
-      return <WarningIcon fontSize="small" color="warning" />;
-    }
     return <InfoIcon fontSize="small" color="info" />;
   }, []);
 
@@ -317,8 +313,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
     if (logFilter === 'all') return logs.slice(-5);
     return logs.filter(log => {
       if (logFilter === 'error') return log.message.toLowerCase().includes('timeout') || log.success === false;
-      if (logFilter === 'warning') return (log.duration ?? 0) > 3;
-      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false && (log.duration ?? 0) <= 3;
+      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false;
       return true;
     }).slice(-5);
   }, [logs, logFilter]);
@@ -327,8 +322,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
     if (logFilter === 'all') return logs;
     return logs.filter(log => {
       if (logFilter === 'error') return log.message.toLowerCase().includes('timeout') || log.success === false;
-      if (logFilter === 'warning') return (log.duration ?? 0) > 3;
-      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false && (log.duration ?? 0) <= 3;
+      if (logFilter === 'info') return !log.message.toLowerCase().includes('timeout') && log.success !== false;
       return true;
     });
   }, [logs, logFilter]);
@@ -751,7 +745,6 @@ function ChartsComponent({ agentId }: ChartsProps) {
                       >
                         <MenuItem value="all">Tous</MenuItem>
                         <MenuItem value="error">Erreurs</MenuItem>
-                        <MenuItem value="warning">Alertes</MenuItem>
                         <MenuItem value="info">Infos</MenuItem>
                       </Select>
                     </FormControl>
@@ -816,6 +809,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
                         </Typography>
                       )}
                     </Stack>
+                    
                   </Box>
                 </Collapse>
               </StyledPaper>
@@ -914,6 +908,23 @@ function ChartsComponent({ agentId }: ChartsProps) {
               <HistoryIcon color="primary" />
               <Typography variant="h5" fontWeight={700}>Historique Complet des Logs</Typography>
             </Box>
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <FormControl size="small">
+                <InputLabel id="log-filter-dialog-label">Filtrer</InputLabel>
+                <Select
+                  labelId="log-filter-dialog-label"
+                  value={logFilter}
+                  label="Filtrer"
+                  onChange={(e) => setLogFilter(e.target.value as typeof logFilter)}
+                  sx={{ borderRadius: 12, bgcolor: theme.palette.background.paper }}
+                  aria-label="Filtrer tous les logs"
+                >
+                  <MenuItem value="all">Tous</MenuItem>
+                  <MenuItem value="error">Erreurs</MenuItem>
+                  <MenuItem value="info">Infos</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
           </DialogTitle>
           <DialogContent>
             <Box sx={{
@@ -973,6 +984,11 @@ function ChartsComponent({ agentId }: ChartsProps) {
               </Stack>
             </Box>
           </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseAllLogsDialog} color="primary" variant="contained" sx={{ borderRadius: 12 }}>
+              Fermer
+            </Button>
+          </DialogActions>
         </Dialog>
 
         <Dialog
@@ -1106,7 +1122,6 @@ function ChartsComponent({ agentId }: ChartsProps) {
                         second: '2-digit',
                         timeZone: 'CET',
                       })}
-                      {' (09:44 AM CET)'}
                     </strong>
                   </Typography>
                 </Box>

@@ -591,5 +591,22 @@
     "duration": 2.79,
     "success": true,
     "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "quel café à djerba recommande toi pour des amis ?",
+    "timestamp": "2025-08-06T08:11:48.356620",
+    "duration": 5.24,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
+  },
+  {
+    "agent_id": 15,
+    "message": "je veux des café où il ya un espace ouvert",
+    "timestamp": "2025-08-06T08:12:19.575070",
+    "duration": 1.38,
+    "success": true,
+    "api": "mistralai/mistral-7b-instruct"
   }
+  
 ]

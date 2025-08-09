@@ -330,3 +330,5 @@ def send_error_email(subject, body):
         print("Email d’erreur envoyé avec succès.")
     except Exception as e:
         print("Erreur lors de l'envoi de l'email :", e)
+    
+    
