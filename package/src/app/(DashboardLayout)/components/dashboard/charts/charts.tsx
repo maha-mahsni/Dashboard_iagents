@@ -888,7 +888,7 @@ function ChartsComponent({ agentId }: ChartsProps) {
                 </Box>
                 <Collapse in={expandedSections.allLogs}>
                   <Typography variant="body2" color="text.secondary" textAlign="center" py={2}>
-                    Cliquez pour voir l'historique complet des logs.
+                    Cliquez pour voir l'historique complet des logs 
                   </Typography>
                 </Collapse>
               </StyledPaper>
