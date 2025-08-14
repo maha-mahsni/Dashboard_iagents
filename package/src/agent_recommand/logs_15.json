@@ -127,14 +127,7 @@
     "success": true,
     "api": "mistralai/mistral-7b-instruct"
   },
-  {
-    "agent_id": 15,
-    "message": "oublie le mot swahili",
-    "timestamp": "2025-07-24T13:46:53.791034",
-    "duration": 2.41,
-    "success": true,
-    "api": "mistralai/mistral-7b-instruct"
-  },
+  
   {
     "agent_id": 15,
     "message": "hi",
