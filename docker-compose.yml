@@ -38,8 +38,6 @@ services:
       MYSQL_USER: dashboard_user
       MYSQL_PASSWORD: dashboard_password
       MYSQL_ROOT_PASSWORD: root_password
-    ports:
-      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
