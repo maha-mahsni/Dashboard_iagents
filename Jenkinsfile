@@ -10,6 +10,21 @@ pipeline {
             }
         }
 
+        stage('Verify Files') {
+            steps {
+                sh '''
+                    echo "Répertoire courant :"
+                    pwd
+
+                    echo "Contenu du workspace :"
+                    ls -la
+
+                    echo "Recherche docker-compose :"
+                    find . -maxdepth 3 -name "docker-compose.yml" -o -name "compose.yml"
+                '''
+            }
+        }
+
         stage('Docker Build') {
             steps {
                 echo 'Construction des images Docker...'
