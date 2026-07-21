@@ -1,0 +1,5 @@
+package/node_modules
+package/.next
+.git
+.gitignore
+npm-debug.log

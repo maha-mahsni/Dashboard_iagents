@@ -42,7 +42,8 @@
     "react-apexcharts": "^1.7.0",
     "react-dom": "18.2.0",
     "react-mui-sidebar": "^1.6.3",
-    "react-syntax-highlighter": "^5.8.0"
+    "react-syntax-highlighter": "^5.8.0",
+    "react-toastify": "^11.1.0"
   },
   "devDependencies": {
     "@types/axios": "^0.9.36",

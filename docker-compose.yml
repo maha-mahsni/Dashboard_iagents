@@ -1,0 +1,63 @@
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dashboard-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://dashboard_user:dashboard_password@mysql:3306/dashboard
+    depends_on:
+      mysql:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./package
+      dockerfile: Dockerfile.backend
+    container_name: dashboard-backend
+    ports:
+      - "8000:8000"
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: dashboard-mysql
+    environment:
+      MYSQL_DATABASE: dashboard
+      MYSQL_USER: dashboard_user
+      MYSQL_PASSWORD: dashboard_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-proot_password"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
