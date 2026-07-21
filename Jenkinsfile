@@ -12,15 +12,13 @@ pipeline {
 
         stage('Verify Files') {
             steps {
+                echo 'Vérification des fichiers du projet...'
                 sh '''
-                    echo "Répertoire courant :"
                     pwd
-
-                    echo "Contenu du workspace :"
                     ls -la
-
-                    echo "Recherche docker-compose :"
-                    find . -maxdepth 3 -name "docker-compose.yml" -o -name "compose.yml"
+                    test -f docker-compose.yml
+                    test -f Dockerfile
+                    test -f Jenkinsfile
                 '''
             }
         }
@@ -28,22 +26,37 @@ pipeline {
         stage('Docker Build') {
             steps {
                 echo 'Construction des images Docker...'
-                sh 'docker compose build'
+                sh '''
+                    docker compose -f docker-compose.yml build
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                echo "Déploiement de l'application..."
-                sh 'docker compose up -d'
+                echo 'Déploiement de l'application...'
+                sh '''
+                    docker compose -f docker-compose.yml up -d
+                '''
             }
         }
 
         stage('Check Services') {
             steps {
                 echo 'Vérification des services...'
-                sh 'docker compose ps'
+                sh '''
+                    docker compose -f docker-compose.yml ps
+                '''
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline CI/CD terminé avec succès !'
+        }
+        failure {
+            echo 'Le pipeline a échoué.'
         }
     }
 }
