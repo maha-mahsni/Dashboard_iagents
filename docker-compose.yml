@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dashboard-frontend
+
     ports:
       - "3000:3000"
     environment:
@@ -20,7 +20,7 @@ services:
     build:
       context: ./package
       dockerfile: Dockerfile.backend
-    container_name: dashboard-backend
+
     ports:
       - "8000:8000"
     environment:
@@ -32,7 +32,7 @@ services:
 
   mysql:
     image: mysql:8.0
-    container_name: dashboard-mysql
+
     environment:
       MYSQL_DATABASE: dashboard
       MYSQL_USER: dashboard_user
